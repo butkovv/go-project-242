@@ -1,5 +1,6 @@
 test:
 	go mod tidy
+	find . -name ".DS_Store" -type f -delete
 	go test -v ./...
 
 install:

@@ -1,4 +1,4 @@
-module pathsize
+module code
 
 go 1.25.3
 
