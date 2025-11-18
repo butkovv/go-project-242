@@ -1,0 +1,27 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.25.x'
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Run a multi-line script
+      run: 	go mod tidy
+            find . -name ".DS_Store" -type f -delete
+            go test -v ./...
