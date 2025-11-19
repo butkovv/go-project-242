@@ -11,25 +11,27 @@ import (
 )
 
 func main() {
-	cli.HelpFlag = &cli.BoolFlag{
-		Name:  "help",
-		Usage: "show help",
-	}
-
 	cmd := &cli.Command{
 		Name:  "pathsize",
 		Usage: "print size of a file or directory",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "human",
-				Aliases: []string{"h"},
+				Aliases: []string{"H"},
 				Value:   false,
 				Usage:   "human-readable sizes (auto-select unit)",
+			},
+			&cli.BoolFlag{
+				Name:    "all",
+				Aliases: []string{"a"},
+				Value:   false,
+				Usage:   "include hidden files and directories",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			path := cmd.Args().Get(0)
-			size, err := code.GetSize(path)
+			inclHidden := cmd.Bool("all")
+			size, err := code.GetSize(path, inclHidden)
 			if err != nil {
 				return err
 			}

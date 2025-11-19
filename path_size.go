@@ -3,15 +3,17 @@ package code
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
-func GetSize(path string) (int, error) {
+func GetSize(path string, inclHidden bool) (int, error) {
 	info, err := os.Lstat(path)
 	if err != nil {
 		return 0, err
 	}
 	size := 0
-	if info.IsDir() {
+	isHidden := strings.HasPrefix(info.Name(), ".")
+	if info.IsDir() && (!isHidden || inclHidden) {
 		files, err := os.ReadDir(path)
 		if err != nil {
 			return 0, err
@@ -22,11 +24,16 @@ func GetSize(path string) (int, error) {
 				if err != nil {
 					return 0, err
 				}
-				size += int(info.Size())
+				isHidden := strings.HasPrefix(info.Name(), ".")
+				if !isHidden || inclHidden {
+					size += int(info.Size())
+				}
 			}
 		}
 	} else {
-		size = int(info.Size())
+		if !isHidden || inclHidden {
+			size = int(info.Size())
+		}
 	}
 	return size, nil
 }

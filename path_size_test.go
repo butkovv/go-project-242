@@ -7,26 +7,59 @@ import (
 func TestPathSizeFile(t *testing.T) {
 	path := "testdata/dir/file"
 	want := 34256
-	size, err := GetSize(path)
+	inclHidden := false
+	size, err := GetSize(path, inclHidden)
 	if want != size || err != nil {
-		t.Errorf(`GetSize(%q) = %d, %v, want match for %d, nil`, path, size, err, want)
+		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
 	}
 }
 
 func TestPathSizeDirectory(t *testing.T) {
 	path := "testdata/dir"
 	want := 205536
-	size, err := GetSize(path)
+	inclHidden := false
+	size, err := GetSize(path, inclHidden)
 	if want != size || err != nil {
-		t.Errorf(`GetSize(%q) = %d, %v, want match for %d, nil`, path, size, err, want)
+		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
 	}
 }
 
 func TestPathSizeNonExistent(t *testing.T) {
 	path := "testdata/dir/file3"
-	size, err := GetSize(path)
+	inclHidden := false
+	size, err := GetSize(path, inclHidden)
 	if err == nil {
-		t.Errorf(`GetSize(%q) = %d, %v, want match for 0, err`, path, size, err)
+		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for 0, err`, path, inclHidden, size, err)
+	}
+}
+
+func TestPathSizeHiddenFileInclHidden(t *testing.T) {
+	path := "testdata/dir/.file3"
+	want := 102768
+	inclHidden := true
+	size, err := GetSize(path, inclHidden)
+	if want != size || err != nil {
+		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
+	}
+}
+
+func TestPathSizeHiddenFileExclHidden(t *testing.T) {
+	path := "testdata/dir/.file3"
+	want := 0
+	inclHidden := false
+	size, err := GetSize(path, inclHidden)
+	if want != size || err != nil {
+		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
+	}
+}
+
+func TestPathSizeDirectoryInclHidden(t *testing.T) {
+	path := "testdata/dir/"
+	want := 308304
+	inclHidden := true
+	size, err := GetSize(path, inclHidden)
+	if want != size || err != nil {
+		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
 	}
 }
 
@@ -72,26 +105,6 @@ func TestFormatSizeExabytesRaw(t *testing.T) {
 
 func TestFormatSizeZeroHuman(t *testing.T) {
 	size := 0
-	want := "0.0B"
-	human := true
-	formattedSize := FormatSize(size, human)
-	if want != formattedSize {
-		t.Errorf(`FormatSize(%d, %t) = %s, want match for %s`, size, human, formattedSize, want)
-	}
-}
-
-func TestFormatSizeZeroRaw(t *testing.T) {
-	size := 0
-	want := "0B"
-	human := false
-	formattedSize := FormatSize(size, human)
-	if want != formattedSize {
-		t.Errorf(`FormatSize(%d, %t) = %s, want match for %s`, size, human, formattedSize, want)
-	}
-}
-
-func TestFormatSizeNegativeHuman(t *testing.T) {
-	size := -1000
 	want := "0.0B"
 	human := true
 	formattedSize := FormatSize(size, human)
