@@ -8,9 +8,10 @@ func TestPathSizeFile(t *testing.T) {
 	path := "testdata/dir/file"
 	want := 34256
 	inclHidden := false
-	size, err := GetSize(path, inclHidden)
+	recursive := false
+	size, err := GetSize(path, inclHidden, recursive)
 	if want != size || err != nil {
-		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
+		t.Errorf(`GetSize(%q, %t, %t) = %d, %v, want match for %d, nil`, path, inclHidden, recursive, size, err, want)
 	}
 }
 
@@ -18,18 +19,20 @@ func TestPathSizeDirectory(t *testing.T) {
 	path := "testdata/dir"
 	want := 205536
 	inclHidden := false
-	size, err := GetSize(path, inclHidden)
+	recursive := false
+	size, err := GetSize(path, inclHidden, recursive)
 	if want != size || err != nil {
-		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
+		t.Errorf(`GetSize(%q, %t, %t) = %d, %v, want match for %d, nil`, path, inclHidden, recursive, size, err, want)
 	}
 }
 
 func TestPathSizeNonExistent(t *testing.T) {
 	path := "testdata/dir/file3"
 	inclHidden := false
-	size, err := GetSize(path, inclHidden)
+	recursive := false
+	size, err := GetSize(path, inclHidden, recursive)
 	if err == nil {
-		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for 0, err`, path, inclHidden, size, err)
+		t.Errorf(`GetSize(%q, %t, %t) = %d, %v, want match for 0, err`, path, inclHidden, recursive, size, err)
 	}
 }
 
@@ -37,9 +40,10 @@ func TestPathSizeHiddenFileInclHidden(t *testing.T) {
 	path := "testdata/dir/.file3"
 	want := 102768
 	inclHidden := true
-	size, err := GetSize(path, inclHidden)
+	recursive := false
+	size, err := GetSize(path, inclHidden, recursive)
 	if want != size || err != nil {
-		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
+		t.Errorf(`GetSize(%q, %t, %t) = %d, %v, want match for %d, nil`, path, inclHidden, recursive, size, err, want)
 	}
 }
 
@@ -47,9 +51,10 @@ func TestPathSizeHiddenFileExclHidden(t *testing.T) {
 	path := "testdata/dir/.file3"
 	want := 0
 	inclHidden := false
-	size, err := GetSize(path, inclHidden)
+	recursive := false
+	size, err := GetSize(path, inclHidden, recursive)
 	if want != size || err != nil {
-		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
+		t.Errorf(`GetSize(%q, %t, %t) = %d, %v, want match for %d, nil`, path, inclHidden, recursive, size, err, want)
 	}
 }
 
@@ -57,9 +62,21 @@ func TestPathSizeDirectoryInclHidden(t *testing.T) {
 	path := "testdata/dir/"
 	want := 308304
 	inclHidden := true
-	size, err := GetSize(path, inclHidden)
+	recursive := false
+	size, err := GetSize(path, inclHidden, recursive)
 	if want != size || err != nil {
-		t.Errorf(`GetSize(%q, %t) = %d, %v, want match for %d, nil`, path, inclHidden, size, err, want)
+		t.Errorf(`GetSize(%q, %t, %t) = %d, %v, want match for %d, nil`, path, inclHidden, recursive, size, err, want)
+	}
+}
+
+func TestPathSizeDirectoryInclHiddenRecursive(t *testing.T) {
+	path := "testdata/dir"
+	want := 359476
+	inclHidden := true
+	recursive := true
+	size, err := GetSize(path, inclHidden, recursive)
+	if want != size || err != nil {
+		t.Errorf(`GetSize(%q, %t, %t) = %d, %v, want match for %d, nil`, path, inclHidden, recursive, size, err, want)
 	}
 }
 

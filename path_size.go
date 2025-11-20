@@ -6,20 +6,32 @@ import (
 	"strings"
 )
 
-func GetSize(path string, inclHidden bool) (int, error) {
+func GetSize(path string, inclHidden bool, recursive bool) (int, error) {
 	info, err := os.Lstat(path)
 	if err != nil {
 		return 0, err
 	}
 	size := 0
-	isHidden := strings.HasPrefix(info.Name(), ".")
+	isHidden := len(info.Name()) > 1 && strings.HasPrefix(info.Name(), ".")
 	if info.IsDir() && (!isHidden || inclHidden) {
 		files, err := os.ReadDir(path)
 		if err != nil {
 			return 0, err
 		}
 		for _, f := range files {
-			if !f.IsDir() {
+			if f.IsDir() && recursive {
+				p := path
+				if strings.HasSuffix(p, "/") {
+					p += f.Name()
+				} else {
+					p = p + "/" + f.Name()
+				}
+				s, err := GetSize(p, inclHidden, recursive)
+				if err != nil {
+					return 0, err
+				}
+				size += s
+			} else if !f.IsDir() {
 				info, err := f.Info()
 				if err != nil {
 					return 0, err
@@ -47,12 +59,12 @@ func FormatSize(size int, human bool) string {
 	}
 	const (
 		B  = 1
-		KB = 1 << 10 // 2^10
-		MB = 1 << 20 // 2^20
-		GB = 1 << 30 // 2^30
-		TB = 1 << 40 // 2^40
-		PB = 1 << 50 // 2^50
-		EB = 1 << 60 // 2^60
+		KB = 1 << 10
+		MB = 1 << 20
+		GB = 1 << 30
+		TB = 1 << 40
+		PB = 1 << 50
+		EB = 1 << 60
 	)
 	formattedSize := float64(size)
 	unit := "B"
