@@ -6,7 +6,15 @@ import (
 	"strings"
 )
 
-func GetPathSize(path string, inclHidden bool, recursive bool) (int, error) {
+func GetPathSize(path string, recursive, humanReadable, inclHidden bool) (string, error) {
+	s, err := getSize(path, inclHidden, recursive)
+	if err != nil {
+		return formatSize(0, humanReadable), err
+	}
+	return formatSize(s, humanReadable), nil
+}
+
+func getSize(path string, inclHidden bool, recursive bool) (int, error) {
 	info, err := os.Lstat(path)
 	if err != nil {
 		return 0, err
@@ -26,7 +34,7 @@ func GetPathSize(path string, inclHidden bool, recursive bool) (int, error) {
 				} else {
 					p = p + "/" + f.Name()
 				}
-				s, err := GetPathSize(p, inclHidden, recursive)
+				s, err := getSize(p, inclHidden, recursive)
 				if err != nil {
 					return 0, err
 				}
@@ -50,7 +58,7 @@ func GetPathSize(path string, inclHidden bool, recursive bool) (int, error) {
 	return size, nil
 }
 
-func FormatSize(size int, human bool) string {
+func formatSize(size int, human bool) string {
 	if size < 0 {
 		size = 0
 	}
