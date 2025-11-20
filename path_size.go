@@ -59,12 +59,6 @@ func getSize(path string, inclHidden bool, recursive bool) (int, error) {
 }
 
 func formatSize(size int, human bool) string {
-	if size < 0 {
-		size = 0
-	}
-	if !human {
-		return fmt.Sprintf("%dB", size)
-	}
 	const (
 		B  = 1
 		KB = 1 << 10
@@ -74,8 +68,14 @@ func formatSize(size int, human bool) string {
 		PB = 1 << 50
 		EB = 1 << 60
 	)
-	formattedSize := float64(size)
 	unit := "B"
+	if size < 0 {
+		size = 0
+	}
+	if !human || size < KB {
+		return fmt.Sprintf("%d%s", size, unit)
+	}
+	formattedSize := float64(size)
 	switch {
 	case size > EB:
 		formattedSize = float64(size) / EB

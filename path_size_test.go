@@ -82,7 +82,7 @@ func TestPathSizeDirectoryInclHiddenRecursive(t *testing.T) {
 
 func TestFormatSizeBytesHuman(t *testing.T) {
 	size := 100
-	want := "100.0B"
+	want := "100B"
 	human := true
 	formattedSize := formatSize(size, human)
 	if want != formattedSize {
@@ -122,7 +122,7 @@ func TestFormatSizeExabytesRaw(t *testing.T) {
 
 func TestFormatSizeZeroHuman(t *testing.T) {
 	size := 0
-	want := "0.0B"
+	want := "0B"
 	human := true
 	formattedSize := formatSize(size, human)
 	if want != formattedSize {
