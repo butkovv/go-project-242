@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+// GetPathSize returns a Go string literal representing the size of a file
+// or a directory and the first error encountered while calculating the size.
+// Resulting string format depends on the value of humanReadable parameter.
+// If target path is a directory, it can be scanned recursively and include hidden files
 func GetPathSize(path string, recursive, humanReadable, inclHidden bool) (string, error) {
 	s, err := getSize(path, inclHidden, recursive)
 	if err != nil {
