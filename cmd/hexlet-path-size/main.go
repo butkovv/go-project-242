@@ -1,3 +1,24 @@
+/*
+hexlet-path-size calculates size of a given path.
+
+Given a file, it calculates the size of the file; given a directory, it calculates the size of all files in
+that directory. By default it does not scan the directory recursively and does not include hidden files.
+
+Usage:
+
+	hexlet-path-size [path] [flags]
+
+The flags are:
+
+	   --recursive, -r
+		 									recursive size of directories (default: false)
+	   --human, -H
+		 									human-readable sizes (auto-select unit) (default: false)
+	   --all, -a
+		 									include hidden files and directories (default: false)
+	   --help, -h
+		 									show help
+*/
 package main
 
 import (
